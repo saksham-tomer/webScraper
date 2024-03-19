@@ -4,13 +4,12 @@ import pandas as pd
 
 def extract_article_content(url):
     try:
-        # Send a GET request to the URL
+        #GET request to the URL
         response = requests.get(url)
-        # Check if the request was successful
+        # Checking if the request was successful
         if response.status_code == 200:
-            # Parse the HTML content
             soup = BeautifulSoup(response.text, 'html.parser')
-            # Extract article heading and body
+            # Extracting article heading and body
             heading = soup.find('h1').get_text().strip()
             body = soup.find('article').get_text().strip()
             return heading, body
@@ -21,28 +20,26 @@ def extract_article_content(url):
         return None, None
 
 def main():
-    # Load the Excel file into a DataFrame
     try:
         df = pd.read_excel("your_file.xlsx")
     except FileNotFoundError:
         print("Error: File not found.")
         return
     
-    # Check if the required columns exist
     if 'URL_ID' not in df.columns or 'URL' not in df.columns:
         print("Error: Missing required columns in the Excel file.")
         return
     
     # Create or open the output text file
     with open("URL_ID.txt", "w", encoding="utf-8") as f:
-        # Iterate over each row in the DataFrame
+        # Iterating over each row in the DataFrame
         for index, row in df.iterrows():
             url_id = row['URL_ID']
             url = row['URL']
-            # Extract article content
+
             heading, body = extract_article_content(url)
             if heading and body:
-                # Write the data to the text file
+                # Writing the data to the text file
                 f.write(f"URL ID: {url_id}\n")
                 f.write(f"Article Heading: {heading}\n")
                 f.write(f"Article Body: {body}\n\n")
